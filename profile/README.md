@@ -1,6 +1,6 @@
 # 3Rings Capital GitHub Repository
 
-Welcome to the 3Rings Capital GitHub organization! This repository contains our private projects, tools, and resources. We are building the future of finance in Africa with AI-driven payable finance solutions that unlock liquidity and optimize cash flow for seamless supply chain financing.
+Welcome to the 3Rings Capital GitHub organization! This repository contains our private projects, tools, and resources. We are building the future of finance with AI-driven payable finance solutions that unlock liquidity and optimize cash flow for seamless supply chain financing.
 
 ## Table of Contents
 - [About Us](#about-us)
@@ -12,7 +12,7 @@ Welcome to the 3Rings Capital GitHub organization! This repository contains our 
 
 ## About Us
 
-3Rings Capital is a private financial technology company headquartered in the United Kingdom and operating in Africa. We focus on building AI-powered solutions to unlock liquidity and optimize cash flow, providing businesses with seamless supply chain financing. Our mission is to transform the finance landscape in Africa by leveraging cutting-edge technology.
+3Rings Capital is a private financial technology company headquartered in the United Kingdom and operating in the UK. We focus on building AI-powered solutions to unlock liquidity and optimize cash flow, providing businesses with seamless supply chain financing. Our mission is to transform the finance landscape in Africa by leveraging cutting-edge technology.
 
 For more about us, visit our website: [3RingsCapital.co](https://3ringscapital.co).
 
