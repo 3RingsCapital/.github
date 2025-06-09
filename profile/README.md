@@ -1,6 +1,6 @@
 # 3Rings Capital GitHub Repository
 
-Welcome to the 3Rings Capital GitHub organization! This repository contains our private projects, tools, and resources. We are building the future of finance with AI-driven payable finance solutions that unlock liquidity and optimize cash flow for seamless supply chain financing.
+Welcome to the 3Rings Capital GitHub organization! This repository contains our private projects, tools, and resources. We are building the future of finance with AI-native financial stakcs for businesses to automate bookkeeping, cashflow, forecasting, and access working capital- everything you need for growth.
 
 ## Table of Contents
 - [About Us](#about-us)
@@ -12,13 +12,13 @@ Welcome to the 3Rings Capital GitHub organization! This repository contains our 
 
 ## About Us
 
-3Rings Capital is a private financial technology company headquartered in the United Kingdom and operating in the UK. We focus on building AI-powered solutions to unlock liquidity and optimize cash flow, providing businesses with seamless supply chain financing. Our mission is to transform the finance landscape in Africa by leveraging cutting-edge technology.
+3Rings is an AI-native financial operating system for businesses—combining embedded finance, automated bookkeeping, access to non-collateralised working capital, real-time cash flow forecasting, and an intelligent CFO assistant. We help companies operate with the speed and insight of a Fortune 500, without the overhead.
 
 For more about us, visit our website: [3RingsCapital.co](https://3ringscapital.co).
 
 ## Our Projects
 
-We are dedicated to creating innovative, AI-driven solutions to enhance supply chain financing. Our repositories contain internal tools and proprietary technologies to further this mission. Due to the nature of our work, our repositories are private and intended for internal use only.
+We are dedicated to creating innovative, AI-native solutions to automate business finance. Our repositories contain internal tools and proprietary technologies to further this mission. Due to the nature of our work, our repositories are private and intended for internal use only.
 
 ## Contribution Guidelines
 
