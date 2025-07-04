@@ -1,0 +1,67 @@
+name: Node Application
+
+on:
+  workflow_call:
+    inputs:
+      branch:
+        description: 'Branch to deploy from'
+        required: true
+        type: string
+
+      server_ip:
+        description: 'Public IP address of the deployment server'
+        required: true
+        type: string
+
+      server_user:
+        description: 'SSH user for the remote server (e.g., ubuntu)'
+        required: true
+        type: string
+
+      app:
+        description: 'Absolute path to the app directory on the server'
+        required: true
+        type: string
+
+      script:
+        description: 'Optional post-deployment shell commands'
+        required: false
+        type: string
+        default: ''
+
+    secrets:
+      ssh_key:
+        description: 'Private SSH key with access to the server'
+        required: true
+
+jobs:
+  deploy:
+    name: Deploy Node.js App
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: 🔐 Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          printf "%s\n" "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ inputs.server_ip }} >> ~/.ssh/known_hosts
+        env:
+          SSH_KEY: ${{ secrets.ssh_key }}
+
+      - name: 🚀 Deploy to Server
+        run: |
+          ssh ${{ inputs.server_user }}@${{ inputs.server_ip }} << EOF
+            set -e
+            cd ${{ inputs.app }}
+            export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
+            git pull origin ${{ inputs.branch }}
+            yarn install --frozen-lockfile
+            yarn build
+            ${{
+              inputs.script != '' && format('{0}', inputs.script) || ':'
+            }}
+          EOF
