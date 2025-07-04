@@ -102,6 +102,6 @@ jobs:
 
             echo "🚀 Running deploy script if provided..."
             if [ ! -z "${{ inputs.script }}" ]; then
-              bash -c "${{ inputs.script }}"
+              eval "{{ inputs.script }}"
             fi
           '
