@@ -29,6 +29,12 @@ on:
         type: string
         default: ''
 
+      require_env:
+        description: 'Require .env file to be present before building'
+        required: false
+        type: boolean
+        default: true
+
     secrets:
       ssh_key:
         description: 'Private SSH key with access to the server'
@@ -56,23 +62,44 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no ${{ inputs.server_user }}@${{ inputs.server_ip }} '
             set -e
-      
-            echo "📁 Changing into app directory..."
+
+            echo "📂 Checking for app directory..."
+            if [ ! -d "${{ inputs.app }}" ]; then
+              echo "📥 Cloning app since it doesn't exist..."
+              git clone --branch ${{ inputs.branch }} git@github.com:${{ github.repository }} "${{ inputs.app }}"
+              exit 0
+            fi
+
             cd ${{ inputs.app }}
-      
+
+            echo "🔍 Checking if directory is a git repo..."
+            if [ ! -d ".git" ]; then
+              echo "⚠️ No .git found. Initializing and adding origin..."
+              git init
+              git remote add origin git@github.com:${{ github.repository }}
+              git fetch origin
+              git checkout ${{ inputs.branch }}
+            fi
+
+            echo "🔍 Checking if .env is required and present..."
+            if [ "${{ inputs.require_env }}" = "true" ] && [ ! -f ".env" ]; then
+              echo "❌ .env file is required but not found!"
+              exit 1
+            fi
+
             echo "🧹 Cleaning uncommitted changes, keeping .env..."
             git reset --hard HEAD
             git clean -fd -e .env
-      
+
             echo "⬇️ Pulling latest from branch: ${{ inputs.branch }}"
             git pull origin ${{ inputs.branch }}
-      
+
             echo "📦 Installing dependencies..."
             yarn install --frozen-lockfile
-      
+
             echo "🔨 Building app..."
             yarn build
-      
+
             echo "🚀 Running deploy script if provided..."
             if [ ! -z "${{ inputs.script }}" ]; then
               bash -c "${{ inputs.script }}"
