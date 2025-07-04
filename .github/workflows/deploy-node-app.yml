@@ -54,27 +54,27 @@ jobs:
 
       - name: 🚀 Deploy to Server
         run: |
-          ssh ${{ inputs.server_user }}@${{ inputs.server_ip }} << EOF
+          ssh -o StrictHostKeyChecking=no ${{ inputs.server_user }}@${{ inputs.server_ip }} '
             set -e
+      
+            echo "📁 Changing into app directory..."
             cd ${{ inputs.app }}
-            export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
       
-            echo "🧹 Resetting any local changes..."
+            echo "🧹 Cleaning uncommitted changes, keeping .env..."
             git reset --hard HEAD
-            git clean -fd
+            git clean -fd -e .env
       
-            echo "⬇️ Pulling latest code from ${{ inputs.branch }}..."
+            echo "⬇️ Pulling latest from branch: ${{ inputs.branch }}"
             git pull origin ${{ inputs.branch }}
       
             echo "📦 Installing dependencies..."
             yarn install --frozen-lockfile
       
-            echo "🔨 Building project..."
+            echo "🔨 Building app..."
             yarn build
       
-            echo "🚀 Running post-deploy script..."
-            ${{
-              inputs.script != '' && format('{0}', inputs.script) || ':'
-            }}
-          EOF
-
+            echo "🚀 Running deploy script if provided..."
+            if [ ! -z "${{ inputs.script }}" ]; then
+              bash -c "${{ inputs.script }}"
+            fi
+          '
