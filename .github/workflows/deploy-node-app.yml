@@ -29,6 +29,12 @@ on:
         type: string
         default: ''
 
+      start_command:
+        description: 'Yarn start command (e.g., start:prod, start:staging)'
+        required: false
+        type: string
+        default: 'start:prod'
+
       require_env:
         description: 'Require .env file to be present before building'
         required: false
@@ -102,6 +108,16 @@ jobs:
 
             echo "🚀 Running deploy script if provided..."
             if [ ! -z "${{ inputs.script }}" ]; then
-              eval "{{ inputs.script }}"
+              eval "${{ inputs.script }}"
+            fi
+
+            echo "🔁 Restarting or starting app with PM2..."
+            pm2 describe "${{ inputs.app }}" > /dev/null
+            if [ $? != 0 ]; then
+              echo "Starting ${{ inputs.app }} with yarn ${{ inputs.start_command }}..."
+              pm2 start yarn --name="${{ inputs.app }}" -- ${{ inputs.start_command }}
+            else
+              echo "Restarting ${{ inputs.app }}..."
+              pm2 restart "${{ inputs.app }}"
             fi
           '
