@@ -23,6 +23,11 @@ on:
         required: true
         type: string
 
+      process_name:
+        description: 'PM2 process name used to identify/restart the app'
+        required: true
+        type: string
+
       script:
         description: 'Optional post-deployment shell commands'
         required: false
@@ -112,10 +117,10 @@ jobs:
             fi
 
             echo "🔁 Restarting or starting app with PM2..."
-            pm2 describe "${{ inputs.app }}" > /dev/null
+            pm2 describe "${{ inputs.process_name }}" > /dev/null
             if [ $? != 0 ]; then
-              echo "Starting ${{ inputs.app }} with yarn ${{ inputs.start_command }}..."
-              pm2 start yarn --name="${{ inputs.app }}" -- ${{ inputs.start_command }}
+              echo "Starting ${{ inputs.process_name }} with yarn ${{ inputs.start_command }}..."
+              pm2 start yarn --name="${{ inputs.process_name }}" -- ${{ inputs.start_command }}
             else
               echo "Restarting ${{ inputs.app }}..."
               pm2 restart "${{ inputs.app }}"
