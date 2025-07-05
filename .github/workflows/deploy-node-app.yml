@@ -106,7 +106,7 @@ jobs:
             git pull origin ${{ inputs.branch }}
 
             echo "📦 Installing dependencies..."
-            yarn install --frozen-lockfile
+            yarn install
 
             echo "🔨 Building app..."
             yarn build
