@@ -71,8 +71,8 @@ jobs:
 
       - name: 🚀 Deploy to Server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ inputs.server_user }}@${{ inputs.server_ip }} << 'EOF'
-            set -e
+          ssh ${{ inputs.server_user }}@${{ inputs.server_ip }} << 'EOF'
+            export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
             
             echo "📂 Checking for app directory..."
             if [ ! -d "${{ inputs.app }}" ]; then
