@@ -112,7 +112,7 @@ jobs:
             yarn build
 
             echo "🚀 Running deploy script if provided..."
-            if [ ! -z "${{ inputs.script }}" ]; then
+            if [ -n "${{ inputs.script }}" ]; then
               eval "${{ inputs.script }}"
             fi
 
@@ -122,7 +122,7 @@ jobs:
               echo "Starting ${{ inputs.process_name }} with yarn ${{ inputs.start_command }}..."
               pm2 start yarn --name="${{ inputs.process_name }}" -- ${{ inputs.start_command }}
             else
-              echo "Restarting ${{ inputs.app }}..."
-              pm2 restart "${{ inputs.app }}"
+              echo "Restarting ${{ inputs.process_name }}..."
+              pm2 restart "${{ inputs.process_name }}"
             fi
           '
