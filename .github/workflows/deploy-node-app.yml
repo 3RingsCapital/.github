@@ -18,6 +18,12 @@ on:
         required: true
         type: string
 
+      ssh_key_filename:
+        description: 'SSH key filename (without path)'
+        required: false
+        type: string
+        default: 'id_ed25519'
+
       app:
         description: 'Absolute path to the app directory on the server'
         required: true
@@ -63,8 +69,8 @@ jobs:
       - name: 🔐 Set up SSH
         run: |
           mkdir -p ~/.ssh
-          printf "%s\n" "$SSH_KEY" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+          printf "%s\n" "$SSH_KEY" > ~/.ssh/{{ inputs.ssh_key_filename }}
+          chmod 600 ~/.ssh/{{ inputs.ssh_key_filename }}
           ssh-keyscan -H ${{ inputs.server_ip }} >> ~/.ssh/known_hosts
         env:
           SSH_KEY: ${{ secrets.ssh_key }}
