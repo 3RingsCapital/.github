@@ -77,9 +77,7 @@ jobs:
 
       - name: 🚀 Deploy to Server
         run: |
-            ssh -i ~/.ssh/${{ inputs.ssh_key_filename }} \
-              -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
-              ${{ inputs.server_user }}@${{ inputs.server_ip }} << 'EOF'
+            ssh -o StrictHostKeyChecking=no ${{ inputs.server_user }}@${{ inputs.server_ip }} << 'EOF'
               set -e
             
               echo "📂 Checking for app directory..."
