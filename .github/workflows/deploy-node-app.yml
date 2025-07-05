@@ -71,9 +71,9 @@ jobs:
 
       - name: 🚀 Deploy to Server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ inputs.server_user }}@${{ inputs.server_ip }} '
+          ssh -o StrictHostKeyChecking=no ${{ inputs.server_user }}@${{ inputs.server_ip }} << 'EOF'
             set -e
-
+            
             echo "📂 Checking for app directory..."
             if [ ! -d "${{ inputs.app }}" ]; then
               echo "📥 Cloning app since it doesn't exist..."
@@ -112,9 +112,8 @@ jobs:
             yarn build
 
             echo "🚀 Running deploy script if provided..."
-            SCRIPT="${{ inputs.script }}"
-            if [ -n "$SCRIPT" ]; then
-              eval "$SCRIPT"
+            if [ ! -z "${{ inputs.script }}" ]; then
+              eval "${{ inputs.script }}"
             fi
 
             echo "🔁 Restarting or starting app with PM2..."
@@ -126,4 +125,4 @@ jobs:
               echo "Restarting ${{ inputs.process_name }}..."
               pm2 restart "${{ inputs.process_name }}"
             fi
-          '
+          EOF
