@@ -77,11 +77,8 @@ jobs:
 
       - name: 🚀 Deploy to Server
         run: |
-            export GIT_SSH_COMMAND="ssh -i ~/.ssh/${{ inputs.ssh_key_filename }} -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
-
-            ssh -i ~/.ssh/${{ inputs.ssh_key_filename }} \
-              -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
-              ${{ inputs.server_user }}@${{ inputs.server_ip }} << 'EOF'
+            export GIT_SSH_COMMAND="ssh -i ~/.ssh/3rings-api-deploy-key -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
+            ssh ubuntu@your-server-ip << 'EOF'
               set -e
             
               echo "📂 Checking for app directory..."
