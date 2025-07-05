@@ -129,8 +129,7 @@ jobs:
               fi
   
               echo "🔁 Restarting or starting app with PM2..."
-              pm2 describe "${{ inputs.process_name }}" > /dev/null
-              if [ $? != 0 ]; then
+              if ! pm2 describe "${{ inputs.process_name }}" > /dev/null 2>&1; then
                 echo "Starting ${{ inputs.process_name }} with yarn ${{ inputs.start_command }}..."
                 pm2 start yarn --name="${{ inputs.process_name }}" -- ${{ inputs.start_command }}
               else
