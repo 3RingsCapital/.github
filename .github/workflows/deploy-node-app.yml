@@ -104,9 +104,14 @@ jobs:
                 exit 1
               fi
   
-              echo "🧹 Cleaning uncommitted changes, keeping .env..."
-              git reset --hard HEAD
-              git clean -fd -e .env
+              if git rev-parse --verify HEAD > /dev/null 2>&1; then
+                echo "🧹 Cleaning uncommitted changes, keeping .env..."
+                git reset --hard HEAD
+                git clean -fd -e .env
+              else
+                echo "⚠️ HEAD not found — skipping cleanup"
+              fi
+
   
               echo "⬇️ Pulling latest from branch: ${{ inputs.branch }}"
               git pull origin ${{ inputs.branch }}
