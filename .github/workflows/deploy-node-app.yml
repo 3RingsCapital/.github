@@ -33,7 +33,7 @@ on:
         description: 'Yarn start command (e.g., start:prod, start:staging)'
         required: false
         type: string
-        default: 'start:prod'
+        default: 'start'
 
       require_env:
         description: 'Require .env file to be present before building'
