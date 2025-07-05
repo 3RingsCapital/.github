@@ -112,8 +112,9 @@ jobs:
             yarn build
 
             echo "🚀 Running deploy script if provided..."
-            if [ -n "${{ inputs.script }}" ]; then
-              eval "${{ inputs.script }}"
+            SCRIPT="${{ inputs.script }}"
+            if [ -n "$SCRIPT" ]; then
+              eval "$SCRIPT"
             fi
 
             echo "🔁 Restarting or starting app with PM2..."
