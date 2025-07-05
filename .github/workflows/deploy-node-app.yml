@@ -77,8 +77,11 @@ jobs:
 
       - name: 🚀 Deploy to Server
         run: |
-          ssh ${{ inputs.server_user }}@${{ inputs.server_ip }} << 'EOF'
-            export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
+            export GIT_SSH_COMMAND="ssh -i ~/.ssh/${{ inputs.ssh_key_filename }} -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
+
+            ssh -i ~/.ssh/${{ inputs.ssh_key_filename }} \
+              -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
+              ${{ inputs.server_user }}@${{ inputs.server_ip }} << 'EOF'
             
             echo "📂 Checking for app directory..."
             if [ ! -d "${{ inputs.app }}" ]; then
