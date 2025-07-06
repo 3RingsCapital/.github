@@ -84,41 +84,35 @@ jobs:
           script: |
             set -e # ⛔ Exit immediately if any command fails
 
-            cd /var/www
-
             echo "🔍 Checking if .env is required and present..."
-            if [ "${{ inputs.require_env }}" = "true" ] && [ ! -f "${{ inputs.app }}/.env" ]; then
+            if [ "${{ inputs.require_env }}" = "true" ] && [ ! -f "/var/www/${{ inputs.app }}/.env" ]; then
               echo "❌ .env file is required but not found!"
               exit 1
             fi
 
-            
             echo "📦 Copying .env file to temp directory..."
-            cp ${{ inputs.app }}/.env temp/${{ inputs.app }}
-
-            echo "📂 Changing directory to temp/${{ inputs.app }}..."
-            cd temp/${{ inputs.app }}
+            cp /var/www/${{ inputs.app }}/.env /var/www/temp/${{ inputs.app }}/
 
             echo "📥 Installing dependencies..."
+            cd /var/www/temp/${{ inputs.app }}
             yarn install
 
             echo "🛠️ Building the project..."
             yarn build
 
             echo "🧹 Cleaning up old build directory..."
-            rm -rf ${{ inputs.app }}
-
-            echo "📂 Changing directory to var/www"
-            cd /var/www
+            rm -rf /var/www/${{ inputs.app }}
 
             echo "🚚 Moving new build to production directory..."
-            mv temp/${{ inputs.app }} ${{ inputs.app }}
+            shopt -s dotglob
+            mv /var/www/temp/${{ inputs.app }}/* /var/www/${{ inputs.app }}
+            shopt -u dotglob
 
             echo "🧽 Removing temporary build folder..."
-            rm -rf temp/${{ inputs.app }}
+            rm -rf /var/www/temp
 
             echo "📂 Changing directory to new app folder..."
-            cd ${{ inputs.app }}
+            cd /var/www/${{ inputs.app }}
 
             echo "🔁 Restarting or starting app with PM2..."
             if ! pm2 describe "${{ inputs.process_name }}" > /dev/null 2>&1; then
