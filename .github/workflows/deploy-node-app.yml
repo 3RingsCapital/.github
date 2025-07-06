@@ -104,6 +104,7 @@ jobs:
             rm -rf /var/www/${{ inputs.app }}
 
             echo "🚚 Moving new build to production directory..."
+            mkdir /var/www/${{ inputs.app }}
             shopt -s dotglob
             mv /var/www/temp/${{ inputs.app }}/* /var/www/${{ inputs.app }}
             shopt -u dotglob
