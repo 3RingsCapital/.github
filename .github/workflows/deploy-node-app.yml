@@ -72,7 +72,7 @@ jobs:
           host: ${{ inputs.server_ip }}
           username: ${{ inputs.server_user }}
           key: ${{ secrets.ssh_key}}
-          source: "."
+          source: "*"
           target: "/var/www/temp/${{ inputs.app }}"
 
       - name: 🚀 Build & Replace Server Files
