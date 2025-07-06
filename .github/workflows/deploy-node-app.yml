@@ -66,76 +66,62 @@ jobs:
       - name: ⬇️ Checkout Repository
         uses: actions/checkout@v3
 
-      - name: 🔐 Set up SSH
-        run: |
-          mkdir -p ~/.ssh
-          printf "%s\n" "$SSH_KEY" > ~/.ssh/${{ inputs.ssh_key_filename }}
-          chmod 600 ~/.ssh/${{ inputs.ssh_key_filename }}
-          ssh-keyscan -H ${{ inputs.server_ip }} >> ~/.ssh/known_hosts
-        env:
-          SSH_KEY: ${{ secrets.ssh_key }}
+      - name: 📦 SCP Upload to Remote Host
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ inputs.server_ip }}
+          username: ${{ inputs.server_user }}
+          key: ${{ secrets.ssh_key}}
+          source: "."
+          target: "/var/www/temp/${{ inputs.app }}"
 
-      - name: 🚀 Deploy to Server
-        run: |
-          export GIT_SSH_COMMAND="ssh -i ~/.ssh/${{ inputs.ssh_key_filename }} -o IdentitiesOnly=yes -o StrictHostKeyChecking=no"
-          ssh -i ~/.ssh/${{ inputs.ssh_key_filename }} \
-            -o IdentitiesOnly=yes -o StrictHostKeyChecking=no \
-            ${{ inputs.server_user }}@${{ inputs.server_ip }} << 'EOF'
-            set -e
-            
-            echo "📂 Checking for app directory..."
-            if [ ! -d "${{ inputs.app }}" ]; then
-              echo "📥 Cloning app since it doesn't exist..."
-              git clone --branch ${{ inputs.branch }} git@github.com:${{ github.repository }} "${{ inputs.app }}"
-              exit 0
-            fi
+      - name: 🚀 Build & Replace Server Files
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ inputs.server_ip }}
+          username: ${{ inputs.server_user }}
+          key: ${{ secrets.ssh_key}}
+          script: |
+            set -e # ⛔ Exit immediately if any command fails
 
-            cd ${{ inputs.app }}
-
-            echo "🔍 Checking if directory is a git repo..."
-            if [ ! -d ".git" ]; then
-              echo "⚠️ No .git found. Initializing and adding origin..."
-              git init
-              git remote add origin git@github.com:${{ github.repository }}
-              git fetch origin
-              git checkout ${{ inputs.branch }}
-            fi
+            cd /var/www
 
             echo "🔍 Checking if .env is required and present..."
-            if [ "${{ inputs.require_env }}" = "true" ] && [ ! -f ".env" ]; then
+            if [ "${{ inputs.require_env }}" = "true" ] && [ ! -f "${{ inputs.app }}/.env" ]; then
               echo "❌ .env file is required but not found!"
               exit 1
             fi
 
-            if git rev-parse --verify HEAD > /dev/null 2>&1; then
-              echo "🧹 Cleaning uncommitted changes, keeping .env..."
-              git reset --hard HEAD
-              git clean -fd -e .env
-            else
-              echo "⚠️ HEAD not found — skipping cleanup"
-            fi
+            
+            echo "📦 Copying .env file to temp directory..."
+            cp ${{ inputs.app }}/.env temp/${{ inputs.app }}
 
+            echo "📂 Changing directory to temp/${{ inputs.app }}..."
+            cd temp/${{ inputs.app }}
 
-            echo "⬇️ Pulling latest from branch: ${{ inputs.branch }}"
-            git pull origin ${{ inputs.branch }}
-
-            echo "📦 Installing dependencies..."
+            echo "📥 Installing dependencies..."
             yarn install
 
-            echo "🔨 Building app..."
+            echo "🛠️ Building the project..."
             yarn build
 
-            echo "🚀 Running deploy script if provided..."
-            if [ ! -z "${{ inputs.script }}" ]; then
-              eval "${{ inputs.script }}"
-            fi
+            echo "🧹 Cleaning up old build directory..."
+            rm -rf ${{ inputs.app }}
+
+            echo "🚚 Moving new build to production directory..."
+            mv temp/${{ inputs.app }} ${{ inputs.app }}
+
+            echo "🧽 Removing temporary build folder..."
+            sudo rm -rf temp/${{ inputs.app }}
+
+            echo "📂 Changing directory to new app folder..."
+            cd ${{ inputs.app }}
 
             echo "🔁 Restarting or starting app with PM2..."
             if ! pm2 describe "${{ inputs.process_name }}" > /dev/null 2>&1; then
-              echo "Starting ${{ inputs.process_name }} with yarn ${{ inputs.start_command }}..."
+              echo "🚀 Starting ${{ inputs.process_name }} with yarn ${{ inputs.start_command }}..."
               pm2 start yarn --name="${{ inputs.process_name }}" -- ${{ inputs.start_command }}
             else
-              echo "Restarting ${{ inputs.process_name }}..."
+              echo "♻️ Restarting ${{ inputs.process_name }}..."
               pm2 restart "${{ inputs.process_name }}"
             fi
-          EOF
