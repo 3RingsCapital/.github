@@ -72,7 +72,7 @@ jobs:
           host: ${{ inputs.server_ip }}
           username: ${{ inputs.server_user }}
           key: ${{ secrets.ssh_key}}
-          source: "*"
+          source: "."
           target: "/var/www/temp/${{ inputs.app }}"
 
       - name: 🚀 Build & Replace Server Files
@@ -112,7 +112,7 @@ jobs:
             mv temp/${{ inputs.app }} ${{ inputs.app }}
 
             echo "🧽 Removing temporary build folder..."
-            sudo rm -rf temp/${{ inputs.app }}
+            rm -rf temp/${{ inputs.app }}
 
             echo "📂 Changing directory to new app folder..."
             cd ${{ inputs.app }}
