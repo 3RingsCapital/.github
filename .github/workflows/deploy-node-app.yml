@@ -108,6 +108,9 @@ jobs:
             echo "🧹 Cleaning up old build directory..."
             rm -rf ${{ inputs.app }}
 
+            echo "📂 Changing directory to var/www"
+            cd /var/www
+
             echo "🚚 Moving new build to production directory..."
             mv temp/${{ inputs.app }} ${{ inputs.app }}
 
