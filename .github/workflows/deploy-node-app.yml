@@ -101,7 +101,7 @@ jobs:
             yarn build
 
             echo "🚀 Starting the server in the background..."
-            export $(grep -v '^#' .env | xargs)
+            PORT=$(grep '^PORT=' .env | cut -d '=' -f2)
             yarn start &  # Run in background
             SERVER_PID=$!
 
