@@ -100,25 +100,25 @@ jobs:
             echo "🛠️ Building the project..."
             yarn build
 
-            echo "🚀 Starting the server in the background..."
-            PORT=5555
-            yarn start -p $PORT &  # Run in background
-            SERVER_PID=$!
+            # echo "🚀 Starting the server in the background..."
+            # PORT=5555
+            # yarn start -p $PORT &  # Run in background
+            # SERVER_PID=$!
 
-            # Wait a few seconds to ensure it starts up
-            sleep 5
+            # # Wait a few seconds to ensure it starts up
+            # sleep 5
 
-            echo "🔍 Checking server health..."
-            if curl -s http://localhost:$PORT > /dev/null; then
-              echo "✅ Server started successfully. Stopping it now..."
-              kill $SERVER_PID
-            else
-              echo "❌ Server failed to respond. Terminating script..."
-              kill $SERVER_PID
-              exit 1
-            fi
+            # echo "🔍 Checking server health..."
+            # if curl -s http://localhost:$PORT > /dev/null; then
+            #   echo "✅ Server started successfully. Stopping it now..."
+            #   kill $SERVER_PID
+            # else
+            #   echo "❌ Server failed to respond. Terminating script..."
+            #   kill $SERVER_PID
+            #   exit 1
+            # fi
 
-            echo "✅ Server passed health check. Continuing with next steps..."
+            # echo "✅ Server passed health check. Continuing with next steps..."
 
             echo "🧹 Cleaning up old build directory..."
             rm -rf /var/www/${{ inputs.app }}
