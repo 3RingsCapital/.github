@@ -56,6 +56,8 @@ on:
       ssh_key:
         description: 'Private SSH key with access to the server'
         required: true
+env:
+  NODE_OPTIONS: --max-old-space-size=1536
 
 jobs:
   deploy:
