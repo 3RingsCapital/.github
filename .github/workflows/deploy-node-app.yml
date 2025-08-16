@@ -52,6 +52,12 @@ on:
         type: boolean
         default: true
 
+      require_port:
+        description: 'Require PORT argument (-p $PORT) when starting app'
+        required: false
+        type: boolean
+        default: true
+
     secrets:
       ssh_key:
         description: 'Private SSH key with access to the server'
@@ -140,8 +146,12 @@ jobs:
             echo "🔁 Restarting or starting app with PM2..."
             if ! pm2 describe "${{ inputs.process_name }}" > /dev/null 2>&1; then
               echo "🚀 Starting ${{ inputs.process_name }} with yarn ${{ inputs.start_command }}..."
-              PORT=$(grep '^PORT=' .env | cut -d '=' -f2)
-              pm2 start yarn --name="${{ inputs.process_name }}" -- ${{ inputs.start_command }} -p $PORT
+              if [ "${{ inputs.require_port }}" = "true" ]; then
+                PORT=$(grep '^PORT=' .env | cut -d '=' -f2)
+                pm2 start yarn --name="${{ inputs.process_name }}" -- ${{ inputs.start_command }} -p $PORT
+              else
+                pm2 start yarn --name="${{ inputs.process_name }}" -- ${{ inputs.start_command }}
+              fi
             else
               echo "♻️ Restarting ${{ inputs.process_name }}..."
               pm2 restart "${{ inputs.process_name }}"
